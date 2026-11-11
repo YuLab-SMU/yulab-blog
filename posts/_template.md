@@ -1,6 +1,7 @@
 ---
 title: 新文章标题
 date: 2026-01-01
+author: 你的名字
 description: 一两句话摘要，会出现在文章列表和预览卡片里。
 tags:
   - 笔记

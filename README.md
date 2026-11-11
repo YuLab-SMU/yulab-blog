@@ -17,6 +17,7 @@ assets/<slug>/              这篇文章的图片，按文章 slug 分目录
 ```
 
 - 一篇文章一个文件，文件名用英文小写加连字符（`rho-agent-workspace.md`），它会成为 URL。
+- 作者写 `author: 名字`；多人用 `authors: [甲, 乙]`，页面上会以「、」连接。
 - 图片放在 `assets/<同名 slug>/`，正文里用相对路径引用：`../assets/<slug>/xxx.png`。
 - 图片文件名建议 ASCII 或中文都可以，**不要有空格**。
 
@@ -30,6 +31,7 @@ assets/<slug>/              这篇文章的图片，按文章 slug 分目录
    ---
    title: 文章标题
    date: 2026-11-11          # 发布/写作日期，用于排序
+   author: 你的名字          # 可选；会显示在标题下方
    description: 一两句话摘要，会出现在列表和各种预览里
    tags: [Rho, Agent]        # 可选，会生成标签页
    draft: true               # 可选；写完删掉这一行才会发布

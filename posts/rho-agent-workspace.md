@@ -1,6 +1,7 @@
 ---
 title: 从「AI 给我做」到「AI 带我一起做」：Rho 带来的 Agent 分析新体验
 date: 2026-11-11
+author: 夏永和
 description: 介绍 Rho：一个让研究者和 AI Agent 在同一个分析工作空间里协作的工具——它把 Agent 做了什么、做出来什么、哪些要你决定，都摆在具体的地方。
 tags:
   - Rho
