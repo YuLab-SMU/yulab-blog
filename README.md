@@ -34,10 +34,13 @@ docs 分支 ──make build──▶ public/ ──make publish / CI──▶ g
 ```bash
 make install    # 首次：npm ci
 make build      # 构建到 public/
-make serve      # 本地预览（默认 http://localhost:8080，改内容会自动重建）
+make serve      # 本地预览 http://localhost:8090（改内容会自动重建）
 make publish    # 构建 + 提交 gh-pages 分支并推送
 make publish PUSH=0   # 只更新本地 gh-pages，不推送
 ```
+
+- 端口：本机 8080 常被别的服务占着，所以默认用 8090；要换用 `make serve PORT=8080`。
+- 装依赖慢或报 `ECONNRESET` 时走镜像：`npm ci --registry=https://registry.npmmirror.com`（本机实测从十几分钟降到几秒）。
 
 `make build` 会把 `docs` 分支检出到 `content/`（`git worktree`，已 gitignore），再渲染到 `public/`。
 

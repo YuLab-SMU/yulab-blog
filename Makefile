@@ -14,6 +14,7 @@
 SHELL := /bin/bash
 CONTENT := content
 OUT := public
+PORT := 8090          # 本机 8080 已被别的服务占用；换端口用 make serve PORT=8080
 
 .PHONY: help install content build serve publish clean
 
@@ -30,7 +31,7 @@ build: content
 	npx quartz build -d $(CONTENT) -o $(OUT)
 
 serve: content
-	npx quartz build -d $(CONTENT) -o $(OUT) --serve
+	npx quartz build -d $(CONTENT) -o $(OUT) --serve --port $(PORT)
 
 publish: build
 	@scripts/publish.sh
