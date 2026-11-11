@@ -75,3 +75,23 @@ assets/<slug>/...         该文章的图片
 - CI：`.github/workflows/deploy.yml`，**每天北京时间 01:00**（cron `0 17 * * *`，UTC）定时构建，另有 `push: main` 和 `workflow_dispatch`。
 - CI 里 `main` → `site/`，`docs` → `content/`，`npx quartz build -d ../content -o ../out`，`peaceiris/actions-gh-pages@v4` 推到 `gh-pages`。
 - 定时任务只认默认分支（`main`）上的 workflow 文件；推 `docs` 不会立刻触发，要等当晚的定时任务或手动 `gh workflow run deploy.yml`。
+- 已实测：推 `main` 会触发 CI 并把产物推到 `gh-pages`（提交信息 `deploy: push 触发，自动构建 <sha>`）。Pages 已指向 `gh-pages` 分支，线上地址 <https://yulab-smu.top/yulab-blog/>。
+- CI 会往前推进 `gh-pages`，所以**本地 `gh-pages` 会落后**。要对齐：`git fetch origin && git branch -f gh-pages origin/gh-pages`（分支没被 checkout，可以直接改引用）。
+
+## 本机环境的两个坑
+
+- **装依赖走镜像**：直连 `registry.npmjs.org`（含经代理）会大量 `ECONNRESET`，`npm ci` 十分钟都装不完。改成
+  `npm ci --registry=https://registry.npmmirror.com`，几秒钟完成（依赖缓存已在本机）。
+- **别用 `pkill -f "…edge-prof…"` 这类写法**：模式会匹配到自己这条 bash 命令，把当前 shell 一起杀掉。用 `pkill -f "edge-pro[f]"` 这种带字符类的写法。
+
+## 对 quartz 本体的三处改动（值得记住原因）
+
+1. `quartz/components/scripts/explorer.inline.ts`：`scrollIntoView({block:"nearest"})`。默认的 `"start"` 会把整页一起滚动——打开任意一篇文章，标题直接被滚出视口（实测 `scrollY=260`）。
+2. `quartz/i18n/locales/zh-CN.ts`：把「文件夹/笔记」改成「目录/文章」，符合博客语感。
+3. `quartz/plugins/transformers/ofm.ts`：callout 的 `className` 传数组而非 `join(" ")`，否则 `tsc` 报 `string` 不能赋给 `string[]`。
+
+另外 `devDependencies` 里的 TypeScript **固定在 5.9.3**：`^7` 移除了 `moduleResolution: node10`，`npm run check` 会直接失败。改动这三处后 `npm run check`（tsc + prettier）是绿的，提交前跑一下。
+
+## CSS 的一个教训
+
+`article p > em:only-child` **不是**「整段只有斜体」——文本节点不算元素，所以 `a *b* c` 里的 `em` 也会命中，被排成独立一行并居中。图注要用 `article p:has(> img) + p > em:only-child`（紧跟图片段落）。
