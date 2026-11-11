@@ -53,3 +53,8 @@ article .recent-notes {
     font-size: 1.4rem;
   }
 }
+
+// 作者行：和下面的日期行贴在一起，别各占一大段
+article .page-header .content-meta.author {
+  margin-bottom: 0.2rem;
+}

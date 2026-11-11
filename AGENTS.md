@@ -64,7 +64,8 @@ posts/_template.md        新文章模板（draft: true，不发布）
 assets/<slug>/...         该文章的图片
 ```
 
-- frontmatter 必填 `title`、`date`；可选 `description`、`tags`、`draft`。
+- frontmatter 必填 `title`、`date`；可选 `author`/`authors`、`description`、`tags`、`draft`。
+- 作者由 `quartz/components/Author.tsx` 渲染（`author: 名字` 或 `authors: [甲, 乙]`），没有作者时不显示。
 - 正文不要再写 `#` 一级标题（标题来自 frontmatter）。
 - 图片文件名不要带空格（`slugifyFilePath` 会把空格换成 `-`，但引用不会跟着变）。
 - 大 GIF 很重（`assets/rho-agent-workspace/` 里有两张 8 MB 上下的录屏），新增素材超过 2–3 MB 时先考虑压缩或转 mp4。
@@ -84,13 +85,14 @@ assets/<slug>/...         该文章的图片
   `npm ci --registry=https://registry.npmmirror.com`，几秒钟完成（依赖缓存已在本机）。
 - **别用 `pkill -f "…edge-prof…"` 这类写法**：模式会匹配到自己这条 bash 命令，把当前 shell 一起杀掉。用 `pkill -f "edge-pro[f]"` 这种带字符类的写法。
 
-## 对 quartz 本体的三处改动（值得记住原因）
+## 对 quartz 本体的四处改动（值得记住原因）
 
 1. `quartz/components/scripts/explorer.inline.ts`：`scrollIntoView({block:"nearest"})`。默认的 `"start"` 会把整页一起滚动——打开任意一篇文章，标题直接被滚出视口（实测 `scrollY=260`）。
 2. `quartz/i18n/locales/zh-CN.ts`：把「文件夹/笔记」改成「目录/文章」，符合博客语感。
 3. `quartz/plugins/transformers/ofm.ts`：callout 的 `className` 传数组而非 `join(" ")`，否则 `tsc` 报 `string` 不能赋给 `string[]`。
+4. 新增 `quartz/components/Author.tsx`：把 frontmatter 的 `author` 渲染在标题下方（标题、作者、日期、标签一行行排下来）。作者是数据，别写进正文。
 
-另外 `devDependencies` 里的 TypeScript **固定在 5.9.3**：`^7` 移除了 `moduleResolution: node10`，`npm run check` 会直接失败。改动这三处后 `npm run check`（tsc + prettier）是绿的，提交前跑一下。
+另外 `devDependencies` 里的 TypeScript **固定在 5.9.3**：`^7` 移除了 `moduleResolution: node10`，`npm run check` 会直接失败。改动这些之后 `npm run check`（tsc + prettier）是绿的，提交前跑一下。
 
 ## CSS 的一个教训
 
