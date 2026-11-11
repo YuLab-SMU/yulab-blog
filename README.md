@@ -6,11 +6,11 @@
 
 ## 三个分支
 
-| 分支 | 放什么 | 谁在用 |
-| --- | --- | --- |
-| `main` | 博客系统：Quartz 本体、配置、构建脚本、CI | 维护者 |
-| `docs` | 文章源文件：Markdown 和图片 | 写文章的人 |
-| `gh-pages` | 渲染好的 html 产物 | GitHub Pages 读取，不要手改 |
+| 分支       | 放什么                                    | 谁在用                      |
+| ---------- | ----------------------------------------- | --------------------------- |
+| `main`     | 博客系统：Quartz 本体、配置、构建脚本、CI | 维护者                      |
+| `docs`     | 文章源文件：Markdown 和图片               | 写文章的人                  |
+| `gh-pages` | 渲染好的 html 产物                        | GitHub Pages 读取，不要手改 |
 
 数据流：
 
@@ -59,12 +59,12 @@ CI 会把 `main` 检出到 `site/`、`docs` 检出到 `content/`，构建后把�
 
 ## 配置在哪
 
-| 文件 | 作用 |
-| --- | --- |
-| `quartz.config.ts` | 站点标题、地址 `baseUrl`、语言、配色、启用的插件 |
-| `quartz.layout.ts` | 页面布局：侧栏、目录、页脚链接、首页「最新文章」 |
-| `quartz/styles/custom.scss` | 中文字体栈、图片与图注样式 |
-| `quartz/static/icon.png` | favicon / 站点图标 |
-| `quartz/static/og-image.png` | 默认社交预览图 |
+| 文件                         | 作用                                             |
+| ---------------------------- | ------------------------------------------------ |
+| `quartz.config.ts`           | 站点标题、地址 `baseUrl`、语言、配色、启用的插件 |
+| `quartz.layout.ts`           | 页面布局：侧栏、目录、页脚链接、首页「最新文章」 |
+| `quartz/styles/custom.scss`  | 中文字体栈、图片与图注样式                       |
+| `quartz/static/icon.png`     | favicon / 站点图标                               |
+| `quartz/static/og-image.png` | 默认社交预览图                                   |
 
 换域名（例如以后挂到 `blog.yulab-smu.top`）要改两处：`quartz.config.ts` 的 `baseUrl`，以及 Pages 里的自定义域名。

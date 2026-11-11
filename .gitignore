@@ -9,3 +9,5 @@ content/
 # 杂项
 .DS_Store
 *.log
+# tsc 增量构建信息
+*.tsbuildinfo

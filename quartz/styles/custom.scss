@@ -6,10 +6,12 @@
 
 // 中文字形走系统字体栈（拉丁字形仍用主题里的 Google 字体）
 :root {
-  --bodyFont: "Source Sans Pro", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
-  --headerFont: "Schibsted Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "Noto Sans CJK SC", "WenQuanYi Micro Hei", system-ui, sans-serif;
+  --bodyFont:
+    "Source Sans Pro", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei", system-ui, sans-serif;
+  --headerFont:
+    "Schibsted Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei", system-ui, sans-serif;
 }
 
 // 中文正文行距略放宽，长句更好读

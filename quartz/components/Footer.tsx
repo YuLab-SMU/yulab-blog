@@ -18,7 +18,8 @@ export default ((opts?: Options) => {
           <a href="https://quartz.jzhao.xyz/">Quartz v{version}</a> © {year}
         </p>
         <p>
-          Content licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>
+          Content licensed under{" "}
+          <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a>
         </p>
         <ul>
           {Object.entries(links).map(([text, link]) => (

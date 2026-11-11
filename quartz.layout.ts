@@ -1,5 +1,6 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
+import { SimpleSlug } from "./quartz/util/path"
 
 // ---------- 小工具 ----------
 const isIndexPage = (page: { fileData: { slug?: string } }) => page.fileData.slug === "index"
@@ -9,10 +10,22 @@ const isPost = (f: { slug?: string }) => (f.slug ?? "").startsWith("posts/")
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [],
+  // 首页正文下方列出最新文章（其余页面因 condition 不渲染）
+  afterBody: [
+    Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: "最新文章",
+        limit: 5,
+        linkToMore: "posts" as SimpleSlug,
+        showTags: true,
+        filter: isPost,
+      }),
+      condition: isIndexPage,
+    }),
+  ],
   footer: Component.Footer({
     links: {
-      "课题组主页": "https://yulab-smu.top/",
+      课题组主页: "https://yulab-smu.top/",
       GitHub: "https://github.com/YuLab-SMU",
       "公众号 Y叔 余光创": "https://yulab-smu.top/images/biobabble.jpg",
     },
@@ -52,19 +65,6 @@ export const defaultContentPageLayout: PageLayout = {
     Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
-  ],
-  // 首页正文下方列出最新文章
-  afterBody: [
-    Component.ConditionalRender({
-      component: Component.RecentNotes({
-        title: "最新文章",
-        limit: 5,
-        linkToMore: "posts",
-        showTags: true,
-        filter: isPost,
-      }),
-      condition: isIndexPage,
-    }),
   ],
 }
 
