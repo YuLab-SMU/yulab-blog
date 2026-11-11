@@ -1,0 +1,61 @@
+name: 构建并发布博客
+
+# 触发方式
+#   1. 定时：每天北京时间 01:00（UTC 17:00）自动构建发布
+#   2. 手动：Actions 页面点 "Run workflow"，或 gh workflow run deploy.yml
+#   3. 推送：main 分支（博客系统）有更新时
+on:
+  schedule:
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# 同时只跑一个发布任务，新的排队而不是并行写 gh-pages
+concurrency:
+  group: deploy-gh-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出博客系统（main 分支）
+        uses: actions/checkout@v4
+        with:
+          path: site
+
+      - name: 检出源文件（docs 分支）
+        uses: actions/checkout@v4
+        with:
+          ref: docs
+          path: content
+
+      - name: 准备 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: 安装依赖
+        working-directory: site
+        run: npm ci
+
+      - name: 构建静态站点
+        working-directory: site
+        run: npx quartz build -d ../content -o ../out
+
+      - name: 关闭 Jekyll 处理
+        run: touch out/.nojekyll
+
+      - name: 发布到 gh-pages 分支
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
+          commit_message: "deploy: ${{ github.event_name }} 触发，自动构建"

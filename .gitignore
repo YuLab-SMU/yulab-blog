@@ -1,0 +1,11 @@
+# 依赖与构建产物
+node_modules/
+public/
+.quartz-cache/
+
+# docs 分支的检出（git worktree），不是 main 的内容
+content/
+
+# 杂项
+.DS_Store
+*.log

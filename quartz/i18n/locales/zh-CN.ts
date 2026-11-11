@@ -1,0 +1,85 @@
+import { Translation } from "./definition"
+
+export default {
+  propertyDefaults: {
+    title: "无题",
+    description: "无描述",
+  },
+  components: {
+    callout: {
+      note: "笔记",
+      abstract: "摘要",
+      info: "提示",
+      todo: "待办",
+      tip: "提示",
+      success: "成功",
+      question: "问题",
+      warning: "警告",
+      failure: "失败",
+      danger: "危险",
+      bug: "错误",
+      example: "示例",
+      quote: "引用",
+    },
+    backlinks: {
+      title: "反向链接",
+      noBacklinksFound: "无法找到反向链接",
+    },
+    themeToggle: {
+      lightMode: "亮色模式",
+      darkMode: "暗色模式",
+    },
+    readerMode: {
+      title: "阅读模式",
+    },
+    explorer: {
+      title: "探索",
+    },
+    footer: {
+      createdWith: "Created with",
+    },
+    graph: {
+      title: "关系图谱",
+    },
+    recentNotes: {
+      title: "最近的笔记",
+      seeRemainingMore: ({ remaining }) => `查看更多${remaining}篇笔记 →`,
+    },
+    transcludes: {
+      transcludeOf: ({ targetSlug }) => `包含${targetSlug}`,
+      linkToOriginal: "指向原始笔记的链接",
+    },
+    search: {
+      title: "搜索",
+      searchBarPlaceholder: "搜索些什么",
+    },
+    tableOfContents: {
+      title: "目录",
+    },
+    contentMeta: {
+      readingTime: ({ minutes }) => `${minutes}分钟阅读`,
+    },
+  },
+  pages: {
+    rss: {
+      recentNotes: "最近的文章",
+      lastFewNotes: ({ count }) => `最近 ${count} 篇文章`,
+    },
+    error: {
+      title: "无法找到",
+      notFound: "页面不存在，或者还没发布。",
+      home: "返回首页",
+    },
+    folderContent: {
+      folder: "目录",
+      itemsUnderFolder: ({ count }) => `这一目录下有 ${count} 篇文章。`,
+    },
+    tagContent: {
+      tag: "标签",
+      tagIndex: "标签索引",
+      itemsUnderTag: ({ count }) => `这一标签下有 ${count} 篇文章。`,
+      showingFirst: ({ count }) => `显示前${count}个标签。`,
+      totalTags: ({ count }) => `总共有${count}个标签。`,
+    },
+  },
+} as const satisfies Translation
