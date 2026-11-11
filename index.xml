@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+      <title>YuLab@SMU</title>
+      <link>https://yulab-smu.top/yulab-blog</link>
+      <description>最近 10 篇文章 on YuLab@SMU</description>
+      <generator>Quartz -- quartz.jzhao.xyz</generator>
+      <item>
+    <title>YuLab@SMU 课题组博客</title>
+    <link>https://yulab-smu.top/yulab-blog/</link>
+    <guid>https://yulab-smu.top/yulab-blog/</guid>
+    <description><![CDATA[ 南方医科大学 YuLab 课题组：生物信息学方法、可视化工具与 AI 辅助数据分析的笔记、教程和想法。 ]]></description>
+    <pubDate>Wed, 11 Nov 2026 10:30:49 GMT</pubDate>
+  </item><item>
+    <title>关于</title>
+    <link>https://yulab-smu.top/yulab-blog/about</link>
+    <guid>https://yulab-smu.top/yulab-blog/about</guid>
+    <description><![CDATA[ 关于 YuLab@SMU 课题组和这个博客。 ]]></description>
+    <pubDate>Wed, 11 Nov 2026 10:30:49 GMT</pubDate>
+  </item><item>
+    <title>从「AI 给我做」到「AI 带我一起做」：Rho 带来的 Agent 分析新体验</title>
+    <link>https://yulab-smu.top/yulab-blog/posts/rho-agent-workspace</link>
+    <guid>https://yulab-smu.top/yulab-blog/posts/rho-agent-workspace</guid>
+    <description><![CDATA[ 介绍 Rho：一个让研究者和 AI Agent 在同一个分析工作空间里协作的工具——它把 Agent 做了什么、做出来什么、哪些要你决定，都摆在具体的地方。 ]]></description>
+    <pubDate>Tue, 10 Nov 2026 16:00:00 GMT</pubDate>
+  </item>
+    </channel>
+  </rss>
