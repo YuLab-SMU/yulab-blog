@@ -14,12 +14,15 @@ posts/                      文章
   _template.md              新文章模板（draft: true，不发布）
 assets/<slug>/              这篇文章的图片，按文章 slug 分目录
   ...
+en/                         英文译文镜像（由 main 分支的 make translate 生成）
+  index.md / about.md / posts/<slug>.md
 ```
 
 - 一篇文章一个文件，文件名用英文小写加连字符（`rho-agent-workspace.md`），它会成为 URL。
 - 作者写 `author: 名字`；多人用 `authors: [甲, 乙]`，页面上会以「、」连接。
 - 图片放在 `assets/<同名 slug>/`，正文里用相对路径引用：`../assets/<slug>/xxx.png`。
 - 图片文件名建议 ASCII 或中文都可以，**不要有空格**。
+- `en/` 是**自动生成**的镜像目录，不要手工新建文章。想校对译文可以直接改 `en/` 下的文件——只要中文原文不变，脚本就不会覆盖它。
 
 ## 写一篇新文章
 
@@ -39,7 +42,8 @@ assets/<slug>/              这篇文章的图片，按文章 slug 分目录
    ```
 
 4. 正文用 Markdown。正文里**不要再写一级标题**（`#`）——文章标题由 frontmatter 的 `title` 渲染。
-5. 提交并推送：
+5. 在 `main` 分支跑一次 `make translate`，生成 `en/` 下的英文译文（增量，只翻新的/改过的）。
+6. 提交并推送：
 
    ```bash
    git add -A && git commit -m "post: <slug>" && git push
