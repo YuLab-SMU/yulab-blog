@@ -68,16 +68,16 @@ export default ((userOpts?: Partial<Options>) => {
 
   LanguageToggle.css = `
 .language-toggle {
-  text-align: right;
-  margin: 0 0 0.5rem 0;
+  margin: 0.6rem 0 0.5rem 0;
   font-size: 0.9rem;
 }
 .language-toggle > a {
   display: inline-block;
-  padding: 0.1rem 0.7rem;
-  border: 1px solid var(--lightgray);
+  padding: 0.2rem 0.8rem;
+  border: 1px solid var(--secondary);
   border-radius: 999px;
   color: var(--secondary);
+  font-weight: 600;
   text-decoration: none;
 }
 .language-toggle > a:hover {

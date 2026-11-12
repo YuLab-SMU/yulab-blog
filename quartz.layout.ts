@@ -48,12 +48,12 @@ export const sharedPageComponents: SharedLayout = {
 // 单篇文章页
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
-    Component.LanguageToggle(),
     Component.ConditionalRender({
       component: Component.Breadcrumbs({ rootName: "首页" }),
       condition: (page) => !isHome(page),
     }),
     Component.ArticleTitle(),
+    Component.LanguageToggle(),
     Component.Author(),
     Component.ConditionalRender({
       component: Component.ContentMeta(),
@@ -89,12 +89,12 @@ export const defaultContentPageLayout: PageLayout = {
 // 所以英文首页 en/index.html 也是走这个布局（由 FolderPage 渲染），首页不该有面包屑和日期。
 export const defaultListPageLayout: PageLayout = {
   beforeBody: [
-    Component.LanguageToggle(),
     Component.ConditionalRender({
       component: Component.Breadcrumbs({ rootName: "首页" }),
       condition: (page) => !isHome(page),
     }),
     Component.ArticleTitle(),
+    Component.LanguageToggle(),
     Component.ConditionalRender({
       component: Component.ContentMeta(),
       condition: (page) => !isHome(page),
