@@ -27,7 +27,35 @@ docs 分支 ──make build──▶ public/ ──make publish / CI──▶ g
 - 一篇一个文件：`posts/<slug>.md`，`<slug>` 就是 URL。
 - 图片放 `assets/<slug>/`，正文用 `../assets/<slug>/xxx.png` 引用。
 - 标题写在 frontmatter 的 `title`，正文里不要再写 `#` 一级标题。
+- 署名写 `author: 名字`（多人用 `authors: [甲, 乙]`），会显示在标题下方。
 - 不想发布就写 `draft: true`。
+
+## 中英文
+
+每篇中文文章都有一个英文镜像页面，右上角点 **English** 就切过去（Quartz 开了 SPA，切换不刷新页面），英文页点 **中文** 切回来。首页、关于页、文章列表页也都有这个按钮。
+
+译文不是浏览器里实时机翻，而是**构建前预生成**、提交在 `docs` 分支的 `en/` 镜像目录里：
+
+```
+docs/
+├── index.md          posts/foo.md          ← 中文原文（你写这个）
+└── en/
+    ├── index.md      posts/foo.md          ← 英文译文（脚本生成，可人工校对）
+```
+
+新文章流程：
+
+```bash
+make translate     # 增量：只翻新增或改动过的文章，写进 content/en/
+git -C content add -A && git -C content commit -m "content: 英文版" && git -C content push
+```
+
+- 用 `deepseek-flash` 翻译，key 取自 `~/.dsh/.credentials.yaml`（或环境变量 `DEEPSEEK_API_KEY`），**不进仓库**；CI 只渲染已有译文，不需要配 secret。
+- 译文 frontmatter 里记了源文件的短 hash（`translated_from`），源文没改就不会重翻，也不会覆盖你手工校对过的译文；要强制重翻用 `python3 scripts/translate.py --force`（`--file posts/foo.md` 只翻一篇）。
+- 不翻译的专有名词列在 `scripts/translate.py` 的 `GLOSSARY`，加术语改那里。
+- ⚠️ 英文译文里的图片路径必须写 `/assets/...`（站点根相对），**不要**写 `../../assets/`——后者会和 Quartz 自己的 `pathToRoot` 叠加多跳一层，图片 404。脚本已经自动做这个转换。
+
+故意没做的两件事：不在前端调翻译 API（会暴露密钥、国内访问不稳），不用 Google 翻译小部件（国内打不开、样式不可控）。代价是新文章要多跑一次 `make translate`。
 
 ## 本地构建
 

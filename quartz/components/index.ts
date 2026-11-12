@@ -9,6 +9,7 @@ import Head from "./Head"
 import PageTitle from "./PageTitle"
 import ContentMeta from "./ContentMeta"
 import Author from "./Author"
+import LanguageToggle from "./LanguageToggle"
 import Spacer from "./Spacer"
 import TableOfContents from "./TableOfContents"
 import Explorer from "./Explorer"
@@ -36,6 +37,7 @@ export {
   PageTitle,
   ContentMeta,
   Author,
+  LanguageToggle,
   Spacer,
   TableOfContents,
   Explorer,

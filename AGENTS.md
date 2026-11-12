@@ -23,6 +23,7 @@ make install      # npm ci（首次，网络慢时约 5–10 min）
 make content      # 确保 content/ 是 docs 分支的 worktree（build 依赖它）
 make build        # npx quartz build -d content -o public
 make serve        # 本地预览 + 热重建
+make translate    # 把新文章预译成英文，写进 content/en/（增量）
 make publish      # 构建 + 提交 gh-pages（PUSH=0 只更新本地）
 make publish PUSH=0
 ```
@@ -39,6 +40,8 @@ grep -o 'src="[^"]*"' public/posts/<slug>.html | grep assets   # 图片地址是
 grep -o '](\.\./assets/[^)]*)' content/posts/*.md | sed 's/.*](\.\.\///;s/)$//' \
   | while read p; do [ -f "content/$p" ] || echo "缺失: $p"; done
 npm run check                                  # tsc --noEmit + prettier（可选，慢）
+python3 scripts/translate.py --dry-run         # 有没有漏翻的新文章
+# 双语：所有页面切换按钮的目标要真实存在，所有图片 src 要能解析到 public/ 下文件
 ```
 
 要肉眼确认就 `make serve` 打开 <http://localhost:8080/yulab-blog/>。
@@ -62,6 +65,7 @@ about.md                  关于
 posts/<slug>.md           一篇文章，slug 即 URL
 posts/_template.md        新文章模板（draft: true，不发布）
 assets/<slug>/...         该文章的图片
+en/                       英文译文镜像（main 分支 make translate 生成）
 ```
 
 - frontmatter 必填 `title`、`date`；可选 `author`/`authors`、`description`、`tags`、`draft`。
@@ -69,6 +73,21 @@ assets/<slug>/...         该文章的图片
 - 正文不要再写 `#` 一级标题（标题来自 frontmatter）。
 - 图片文件名不要带空格（`slugifyFilePath` 会把空格换成 `-`，但引用不会跟着变）。
 - 大 GIF 很重（`assets/rho-agent-workspace/` 里有两张 8 MB 上下的录屏），新增素材超过 2–3 MB 时先考虑压缩或转 mp4。
+
+## 双语（中英）
+
+- 译文是**预生成的静态文件**，在 `docs` 分支的 `en/` 镜像目录（路径一一对应：`posts/foo.md` → `en/posts/foo.md`）。
+- 生成器：`scripts/translate.py`（`make translate`）。用 `deepseek-flash`，key 取 `~/.dsh/.credentials.yaml` 的 `refs.DEEPSEEK_API_KEY` 或环境变量 `DEEPSEEK_API_KEY`，**不进仓库**。只用标准库。
+- 增量：译文 frontmatter 的 `translated_from` 记源文件短 hash；源没变就跳过，所以手工校对过的译文不会被覆盖。`--force` 重翻，`--file` 只翻一篇，`--dry-run` 预览。
+- 新文章流程：写中文 → `make translate` → 提交 `docs` → CI 渲染。CI **不需要**任何 secret。
+- 切换按钮：`quartz/components/LanguageToggle.tsx`，读 `allFiles` 判断对应译文是否存在，避免死链；列表页（`posts/index`）不在 `allFiles` 里，靠"目标目录下有内容"兜底，并补尾部 `/`。
+- `quartz.layout.ts` 里两个首页各挂一个 `RecentNotes`（中文「最新文章」filter `posts/`，英文「Recent posts」filter `en/posts/`）；`Explorer` 的 `filterFn` 排除 `en`，中文侧栏不重复列文章。
+
+### 双语的三个坑（都实测过）
+
+1. **英文译文里的图片路径必须写 `/assets/...`（站点根相对）**，`scripts/translate.py` 已自动转换。写 `../../assets/` 会和 Quartz `transformLink` 的 `pathToRoot(src)` 叠加，生成 `../.././../assets/...`，解析到站点根 `/assets/...` 而不是 `/yulab-blog/assets/...`，英文页图片全 404。
+2. **`ContentPage` 跳过所有 `slug.endsWith("/index")`**（`contentPage.tsx` 里明确 `continue`），所以 `en/index.html` 是 `FolderPage` 用 `defaultListPageLayout` 渲染的（正文取 `en/index.md` 的 tree）。因此**两个布局**（`defaultContentPageLayout` 和 `defaultListPageLayout`）里的 Breadcrumbs / ContentMeta 都要按 `isHome` 条件隐藏，否则英文首页会冒出面包屑和日期。别去改 `folderPage.tsx` 跳过有 index 的目录——那样 `en/index.html` 会直接消失。
+3. 术语表在 `scripts/translate.py` 的 `GLOSSARY`。`Y叔 余光创`（公众号名）必须保留原样，否则会被译成 "Uncle Y, Guangchuang Yu"，和首页不一致。
 
 ## 发布链路
 
@@ -85,12 +104,13 @@ assets/<slug>/...         该文章的图片
   `npm ci --registry=https://registry.npmmirror.com`，几秒钟完成（依赖缓存已在本机）。
 - **别用 `pkill -f "…edge-prof…"` 这类写法**：模式会匹配到自己这条 bash 命令，把当前 shell 一起杀掉。用 `pkill -f "edge-pro[f]"` 这种带字符类的写法。
 
-## 对 quartz 本体的四处改动（值得记住原因）
+## 对 quartz 本体的五处改动（值得记住原因）
 
 1. `quartz/components/scripts/explorer.inline.ts`：`scrollIntoView({block:"nearest"})`。默认的 `"start"` 会把整页一起滚动——打开任意一篇文章，标题直接被滚出视口（实测 `scrollY=260`）。
 2. `quartz/i18n/locales/zh-CN.ts`：把「文件夹/笔记」改成「目录/文章」，符合博客语感。
 3. `quartz/plugins/transformers/ofm.ts`：callout 的 `className` 传数组而非 `join(" ")`，否则 `tsc` 报 `string` 不能赋给 `string[]`。
 4. 新增 `quartz/components/Author.tsx`：把 frontmatter 的 `author` 渲染在标题下方（标题、作者、日期、标签一行行排下来）。作者是数据，别写进正文。
+5. 新增 `quartz/components/LanguageToggle.tsx`：中英文切换按钮。放在两个布局的 `beforeBody` 第一位。
 
 另外 `devDependencies` 里的 TypeScript **固定在 5.9.3**：`^7` 移除了 `moduleResolution: node10`，`npm run check` 会直接失败。改动这些之后 `npm run check`（tsc + prettier）是绿的，提交前跑一下。
 

@@ -10,16 +10,17 @@
 #   make serve       本地预览（带热更新）
 #   make publish     构建 + 提交 gh-pages 分支
 #   make content     只确保 content/ 是 docs 分支的检出
+#   make translate    把新文章预译成英文，写回 content/en/
 
 SHELL := /bin/bash
 CONTENT := content
 OUT := public
 PORT := 8090          # 本机 8080 已被别的服务占用；换端口用 make serve PORT=8080
 
-.PHONY: help install content build serve publish clean
+.PHONY: help install content build serve translate publish clean
 
 help:
-	@sed -n '1,14p' Makefile | sed 's/^# \{0,1\}//'
+	@sed -n '1,13p' Makefile | sed 's/^# \{0,1\}//'
 
 install:
 	npm ci
@@ -32,6 +33,10 @@ build: content
 
 serve: content
 	npx quartz build -d $(CONTENT) -o $(OUT) --serve --port $(PORT)
+
+# 预生成英文译文（增量；需要本机 ~/.dsh/.credentials.yaml 里的 DeepSeek key）
+translate: content
+	python3 scripts/translate.py
 
 publish: build
 	@scripts/publish.sh

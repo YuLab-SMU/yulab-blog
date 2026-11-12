@@ -3,14 +3,17 @@ import * as Component from "./quartz/components"
 import { SimpleSlug } from "./quartz/util/path"
 
 // ---------- 小工具 ----------
-const isIndexPage = (page: { fileData: { slug?: string } }) => page.fileData.slug === "index"
+const isZhIndex = (page: { fileData: { slug?: string } }) => page.fileData.slug === "index"
+const isEnIndex = (page: { fileData: { slug?: string } }) => page.fileData.slug === "en/index"
+const isHome = (page: { fileData: { slug?: string } }) => isZhIndex(page) || isEnIndex(page)
 const isPost = (f: { slug?: string }) => (f.slug ?? "").startsWith("posts/")
+const isEnPost = (f: { slug?: string }) => (f.slug ?? "").startsWith("en/posts/")
 
 // 所有页面共用的部分
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  // 首页正文下方列出最新文章（其余页面因 condition 不渲染）
+  // 两个首页各列自己语言的最新文章
   afterBody: [
     Component.ConditionalRender({
       component: Component.RecentNotes({
@@ -20,7 +23,17 @@ export const sharedPageComponents: SharedLayout = {
         showTags: true,
         filter: isPost,
       }),
-      condition: isIndexPage,
+      condition: isZhIndex,
+    }),
+    Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: "Recent posts",
+        limit: 5,
+        linkToMore: "en/posts" as SimpleSlug,
+        showTags: false,
+        filter: isEnPost,
+      }),
+      condition: isEnIndex,
     }),
   ],
   footer: Component.Footer({
@@ -35,15 +48,16 @@ export const sharedPageComponents: SharedLayout = {
 // 单篇文章页
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
+    Component.LanguageToggle(),
     Component.ConditionalRender({
       component: Component.Breadcrumbs({ rootName: "首页" }),
-      condition: (page) => page.fileData.slug !== "index",
+      condition: (page) => !isHome(page),
     }),
     Component.ArticleTitle(),
     Component.Author(),
     Component.ConditionalRender({
       component: Component.ContentMeta(),
-      condition: (page) => page.fileData.slug !== "index",
+      condition: (page) => !isHome(page),
     }),
     Component.TagList(),
   ],
@@ -60,7 +74,9 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      filterFn: (node) => node.slugSegment !== "tags" && node.slugSegment !== "en",
+    }),
   ],
   right: [
     Component.Graph(),
@@ -69,12 +85,20 @@ export const defaultContentPageLayout: PageLayout = {
   ],
 }
 
-// 列表页（目录、标签）
+// 列表页（目录、标签）。注意：Quartz 的 ContentPage 会跳过所有 */index，
+// 所以英文首页 en/index.html 也是走这个布局（由 FolderPage 渲染），首页不该有面包屑和日期。
 export const defaultListPageLayout: PageLayout = {
   beforeBody: [
-    Component.Breadcrumbs({ rootName: "首页" }),
+    Component.LanguageToggle(),
+    Component.ConditionalRender({
+      component: Component.Breadcrumbs({ rootName: "首页" }),
+      condition: (page) => !isHome(page),
+    }),
     Component.ArticleTitle(),
-    Component.ContentMeta(),
+    Component.ConditionalRender({
+      component: Component.ContentMeta(),
+      condition: (page) => !isHome(page),
+    }),
   ],
   left: [
     Component.PageTitle(),
@@ -88,7 +112,9 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      filterFn: (node) => node.slugSegment !== "tags" && node.slugSegment !== "en",
+    }),
   ],
   right: [],
 }
